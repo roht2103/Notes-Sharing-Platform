@@ -1,7 +1,7 @@
 # ============================================================
 # PythonAnywhere WSGI Configuration File
 # ============================================================
-# 
+#
 # Instructions:
 # 1. Go to PythonAnywhere Web tab
 # 2. Click on WSGI configuration file link

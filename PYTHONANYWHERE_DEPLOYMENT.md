@@ -1,4 +1,5 @@
 # PythonAnywhere Deployment Guide
+
 ## Digital Notes Sharing Platform
 
 Complete step-by-step guide to deploy your Django application on PythonAnywhere.
@@ -8,6 +9,7 @@ Complete step-by-step guide to deploy your Django application on PythonAnywhere.
 ## 📋 **Pre-Deployment Checklist**
 
 Before deploying, you need:
+
 - ✅ A PythonAnywhere account (free tier works fine)
 - ✅ Your Django project files
 - ✅ GitHub account (recommended for easy upload)
@@ -23,6 +25,7 @@ Before deploying, you need:
 5. Verify your email
 
 **Free Tier Includes**:
+
 - One web app at `yourusername.pythonanywhere.com`
 - 512 MB storage
 - Limited CPU time
@@ -34,6 +37,7 @@ Before deploying, you need:
 ### **Option A: Using GitHub (Recommended)**
 
 1. **Create GitHub Repository**
+
    ```bash
    # On your local machine
    cd "D:\WORKSPACE\Notes Sharing Platform"
@@ -49,6 +53,7 @@ Before deploying, you need:
    - Click "Create repository"
 
 3. **Push to GitHub**
+
    ```bash
    git remote add origin https://github.com/YOUR_USERNAME/notes-sharing-platform.git
    git push -u origin main
@@ -135,6 +140,7 @@ python manage.py shell
 ```
 
 In the Python shell:
+
 ```python
 from notes.models import Category
 
@@ -154,12 +160,14 @@ exit()
 ```
 
 **Create admin user**:
+
 ```bash
 python manage.py create_default_admin
 # This creates: username=admin, password=admin123
 ```
 
 Or create custom admin:
+
 ```bash
 python manage.py createsuperuser
 # Follow prompts to create your admin account
@@ -235,10 +243,10 @@ In the **Web** tab, scroll to **"Static files"** section:
 
 Add these two mappings:
 
-| URL           | Directory                                          |
-|---------------|---------------------------------------------------|
-| `/static/`    | `/home/yourusername/notes-sharing-platform/static` |
-| `/media/`     | `/home/yourusername/notes-sharing-platform/media`  |
+| URL        | Directory                                          |
+| ---------- | -------------------------------------------------- |
+| `/static/` | `/home/yourusername/notes-sharing-platform/static` |
+| `/media/`  | `/home/yourusername/notes-sharing-platform/media`  |
 
 **⚠️ Replace `yourusername`** with your actual username!
 
@@ -260,6 +268,7 @@ Click the **green checkmarks** to save.
 2. You should see your Notes Sharing Platform!
 
 ### **Test These Features**:
+
 - ✅ Home page loads with notes list
 - ✅ Register new account
 - ✅ Login with new account
@@ -277,6 +286,7 @@ Click the **green checkmarks** to save.
 ### **Issue 1: "ImportError: No module named 'digital_notes'"**
 
 **Solution**:
+
 - Check WSGI file has correct path
 - Verify virtual environment is set correctly
 - Reload web app
@@ -285,14 +295,17 @@ Click the **green checkmarks** to save.
 
 **Solution**:
 Edit `settings.py`:
+
 ```python
 ALLOWED_HOSTS = ['yourusername.pythonanywhere.com']
 ```
+
 Then reload web app.
 
 ### **Issue 3: Static Files Not Loading (No CSS)**
 
 **Solution**:
+
 1. Run `python manage.py collectstatic`
 2. Check Static files mappings in Web tab
 3. Reload web app
@@ -300,6 +313,7 @@ Then reload web app.
 ### **Issue 4: "OperationalError: database is locked"**
 
 **Solution**:
+
 - This happens with SQLite under load
 - For production, consider PostgreSQL
 - For now, just reload the page
@@ -307,6 +321,7 @@ Then reload web app.
 ### **Issue 5: File Upload Fails**
 
 **Solution**:
+
 ```bash
 cd ~/notes-sharing-platform
 mkdir -p media/notes
@@ -317,6 +332,7 @@ chmod 755 media/notes
 ### **View Error Logs**
 
 If something goes wrong:
+
 1. Go to **Web** tab
 2. Scroll to **"Log files"** section
 3. Click **"Error log"** to see detailed errors
@@ -328,12 +344,14 @@ If something goes wrong:
 ### **1. Change Secret Key**
 
 Edit `settings.py`:
+
 ```python
 import os
 SECRET_KEY = os.environ.get('SECRET_KEY', 'your-new-secret-key-here')
 ```
 
 Generate new secret key:
+
 ```python
 from django.core.management.utils import get_random_secret_key
 print(get_random_secret_key())
@@ -350,6 +368,7 @@ python manage.py changepassword admin
 ### **3. Set Up Environment Variables**
 
 In PythonAnywhere Bash:
+
 ```bash
 echo 'export SECRET_KEY="your-secret-key"' >> ~/.bashrc
 source ~/.bashrc
@@ -362,6 +381,7 @@ source ~/.bashrc
 When you make changes to your code:
 
 ### **If using GitHub**:
+
 ```bash
 # On your local machine
 git add .
@@ -378,6 +398,7 @@ python manage.py collectstatic --noinput  # If static files changed
 ```
 
 ### **If uploading manually**:
+
 1. Upload changed files via Files tab
 2. Reload web app from Web tab
 
@@ -386,12 +407,14 @@ python manage.py collectstatic --noinput  # If static files changed
 ## 📊 **Monitoring**
 
 ### **Check Logs**:
+
 - Go to **Web** tab
 - Check **Error log** for Python errors
 - Check **Server log** for HTTP requests
 - Check **Access log** for traffic
 
 ### **Usage Limits**:
+
 - Go to **Account** tab
 - Monitor CPU usage
 - Free tier: 100 CPU-seconds/day
