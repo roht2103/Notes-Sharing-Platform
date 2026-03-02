@@ -1,0 +1,41 @@
+================================================================================
+TEMPLATE AUTO-FORMATTING FIX
+================================================================================
+
+PROBLEM:
+Your code editor's auto-formatter (Prettier, Beautify, etc.) was automatically
+reformatting Django template files and breaking the template syntax by:
+- Combining Django tags on the same line: {% endif %} {% else %}
+- Splitting Django tags across lines
+- This causes "Invalid block tag" errors
+
+SOLUTION APPLIED:
+✅ Created .prettierignore - Excludes templates from Prettier formatting
+✅ Created .editorconfig - Sets editor rules for all file types
+✅ Created .vscode/settings.json - Disables formatOnSave for Django templates
+✅ Fixed note_list.html - Corrected all template syntax errors
+
+IMPORTANT - WHAT TO DO NOW:
+1. **RELOAD VS CODE WINDOW**:
+   - Press Ctrl+Shift+P
+   - Type "Reload Window"
+   - Select "Developer: Reload Window"
+
+2. **Verify settings took effect**:
+   - Open any .html template file
+   - Look at bottom-right of VS Code - it should say "Django HTML" not "HTML"
+   - Try saving the file - it should NOT auto-format
+
+3. **If using other editors** (PyCharm, Sublime, etc.):
+   - Disable auto-format for .html files
+   - Or configure Django template support
+
+TESTING:
+After reloading VS Code, your templates should stop breaking!
+- The server should now work without template errors
+- Visit http://127.0.0.1:8000/ and test all pages
+
+RECOMMENDED VS CODE EXTENSION:
+Install "Django" extension by Baptiste Darthenay for better Django template support
+
+================================================================================

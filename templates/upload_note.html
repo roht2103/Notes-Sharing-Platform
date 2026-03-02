@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Note - Digital Notes{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-3">
+  <div class="row justify-content-center py-3">
+    <div class="col-lg-8">
+      <!-- Header -->
+      <div class="mb-3">
+        <h5 class="fw-semibold mb-1">Upload a Note</h5>
+        <p class="text-muted small mb-0">Share your knowledge with the community</p>
+      </div>
+
+      <!-- Upload Form Card -->
+      <div class="card border shadow-sm mb-3">
+        <div class="card-body p-3">
+          <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger border small mb-3">
+                {{ form.non_field_errors }}
+              </div>
+            {% endif %}
+
+            <div class="mb-3">
+              <label for="{{ form.title.id_for_label }}" class="form-label small fw-medium">
+                Title *
+              </label>
+              {{ form.title }}
+              {% if form.title.errors %}
+                <div class="text-danger small mt-1">
+                  {{ form.title.errors }}
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label for="{{ form.description.id_for_label }}" class="form-label small fw-medium">
+                Description *
+              </label>
+              {{ form.description }}
+              {% if form.description.errors %}
+                <div class="text-danger small mt-1">
+                  {{ form.description.errors }}
+                </div>
+              {% endif %}
+              <div class="form-text small">
+                Provide a detailed description to help others understand your note
+              </div>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-md-6">
+                <label for="{{ form.category.id_for_label }}" class="form-label small fw-medium">
+                  Category *
+                </label>
+                {{ form.category }}
+                {% if form.category.errors %}
+                  <div class="text-danger small mt-1">
+                    {{ form.category.errors }}
+                  </div>
+                {% endif %}
+              </div>
+
+              <div class="col-md-6">
+                <label for="{{ form.file.id_for_label }}" class="form-label small fw-medium">
+                  File *
+                </label>
+                {{ form.file }}
+                {% if form.file.errors %}
+                  <div class="text-danger small mt-1">
+                    {{ form.file.errors }}
+                  </div>
+                {% endif %}
+                <div class="form-text small">
+                  PDF, DOC, DOCX • Max 10MB
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex gap-2 pt-2">
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-cloud-upload"></i> Upload Note
+              </button>
+              <a href="{% url 'note_list' %}" class="btn btn-outline-secondary">
+                Cancel
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Upload Guidelines -->
+      <div class="card border shadow-sm">
+        <div class="card-body p-3">
+          <h6 class="fw-semibold small mb-2">
+            <i class="bi bi-info-circle"></i> Upload Guidelines
+          </h6>
+          <div class="row g-2">
+            <div class="col-md-6">
+              <div class="d-flex">
+                <i class="bi bi-check-circle text-success me-2 small"></i>
+                <small class="text-muted">Educational and relevant content</small>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="d-flex">
+                <i class="bi bi-check-circle text-success me-2 small"></i>
+                <small class="text-muted">Choose correct category</small>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="d-flex">
+                <i class="bi bi-check-circle text-success me-2 small"></i>
+                <small class="text-muted">Clear, descriptive title</small>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="d-flex">
+                <i class="bi bi-check-circle text-success me-2 small"></i>
+                <small class="text-muted">Detailed description</small>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="d-flex">
+                <i class="bi bi-check-circle text-success me-2 small"></i>
+                <small class="text-muted">Only authorized content</small>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="d-flex">
+                <i class="bi bi-x-circle text-danger me-2 small"></i>
+                <small class="text-muted">No inappropriate content</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

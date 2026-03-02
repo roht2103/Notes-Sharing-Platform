@@ -1,0 +1,15 @@
+# Ignore Django template files to prevent formatting issues
+templates/
+*.html
+
+# Ignore Python files (use Black or other Python formatters)
+*.py
+
+# Ignore migrations
+*/migrations/
+
+# Ignore static files
+static/
+
+# Ignore media files
+media/
