@@ -30,7 +30,8 @@ for cat in categories:
 print("Categories created successfully!")
 END
 
-# Optional: Create default admin user (comment out for security in production)
-# python manage.py create_default_admin
+# Create default admin user automatically
+echo "Creating admin user..."
+python manage.py create_default_admin
 
 echo "Build completed successfully!"
