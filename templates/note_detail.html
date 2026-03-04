@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load file_helpers %}
 
 {% block title %}{{ note.title }} - Digital Notes{% endblock %}
 
@@ -180,7 +181,15 @@
           </div>
           <div>
             <small class="text-muted d-block small">File Size</small>
-            <p class="mb-0 small">{{ note.file.size|filesizeformat }}</p>
+            <p class="mb-0 small">
+              {% with file_size=note.file|safe_file_size %}
+                {% if file_size > 0 %}
+                  {{ file_size|filesizeformat }}
+                {% else %}
+                  <span class="text-muted">File unavailable</span>
+                {% endif %}
+              {% endwith %}
+            </p>
           </div>
         </div>
       </div>

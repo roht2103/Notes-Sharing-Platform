@@ -24,7 +24,10 @@ urlpatterns = [
     path('', include('notes.urls')),
 ]
 
-# Serve media files during development
+# Serve media files (development and production)
+# Note: For production with high traffic, use cloud storage (Cloudinary, S3)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Serve static files during development
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -21,7 +21,7 @@ def register_view(request):
     """
     if request.user.is_authenticated:
         return redirect('note_list')
-    
+
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
@@ -32,7 +32,7 @@ def register_view(request):
             messages.error(request, 'Please correct the errors below.')
     else:
         form = UserRegistrationForm()
-    
+
     return render(request, 'register.html', {'form': form})
 
 
@@ -46,7 +46,7 @@ def login_view(request):
         if request.user.is_staff:
             return redirect('/admin/')
         return redirect('note_list')
-    
+
     if request.method == 'POST':
         form = UserLoginForm(request, data=request.POST)
         if form.is_valid():
@@ -55,7 +55,7 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                
+
                 # Redirect based on user role
                 if user.is_staff or user.is_superuser:
                     messages.success(request, f'Welcome Admin, {username}!')
@@ -70,7 +70,7 @@ def login_view(request):
             messages.error(request, 'Invalid username or password.')
     else:
         form = UserLoginForm()
-    
+
     return render(request, 'login.html', {'form': form})
 
 
@@ -92,39 +92,39 @@ def note_list_view(request):
     notes = Note.objects.select_related('user', 'category').annotate(
         download_count=Count('downloads')
     )
-    
+
     # Handle search and filter
     search_form = NoteSearchForm(request.GET)
     if search_form.is_valid():
         search_query = search_form.cleaned_data.get('search_query')
         category = search_form.cleaned_data.get('category')
-        
+
         if search_query:
             notes = notes.filter(
                 Q(title__icontains=search_query) |
                 Q(description__icontains=search_query)
             )
-        
+
         if category:
             notes = notes.filter(category=category)
-    
+
     # Pagination - 9 notes per page
     paginator = Paginator(notes, 9)
     page = request.GET.get('page')
-    
+
     try:
         notes_page = paginator.page(page)
     except PageNotAnInteger:
         notes_page = paginator.page(1)
     except EmptyPage:
         notes_page = paginator.page(paginator.num_pages)
-    
+
     context = {
         'notes': notes_page,
         'search_form': search_form,
         'total_notes': notes.count()
     }
-    
+
     return render(request, 'note_list.html', context)
 
 
@@ -146,7 +146,7 @@ def upload_note_view(request):
             messages.error(request, 'Please correct the errors below.')
     else:
         form = NoteUploadForm()
-    
+
     return render(request, 'upload_note.html', {'form': form})
 
 
@@ -160,18 +160,18 @@ def note_detail_view(request, pk):
         pk=pk
     )
     comments = note.comments.select_related('user').all()
-    
+
     # Check if current user has downloaded this note
     has_downloaded = False
     if request.user.is_authenticated:
         has_downloaded = note.is_downloaded_by_user(request.user)
-    
+
     # Handle comment form submission
     if request.method == 'POST':
         if not request.user.is_authenticated:
             messages.error(request, 'You must be logged in to comment.')
             return redirect('login')
-        
+
         comment_form = CommentForm(request.POST)
         if comment_form.is_valid():
             comment = comment_form.save(commit=False)
@@ -182,7 +182,7 @@ def note_detail_view(request, pk):
             return redirect('note_detail', pk=pk)
     else:
         comment_form = CommentForm()
-    
+
     context = {
         'note': note,
         'comments': comments,
@@ -190,7 +190,7 @@ def note_detail_view(request, pk):
         'download_count': note.get_download_count(),
         'has_downloaded': has_downloaded
     }
-    
+
     return render(request, 'note_detail.html', context)
 
 
@@ -201,7 +201,15 @@ def download_note_view(request, pk):
     Create download record and serve file
     """
     note = get_object_or_404(Note, pk=pk)
-    
+
+    # Check if file exists
+    if not note.file or not note.file.storage.exists(note.file.name):
+        messages.error(
+            request,
+            'File is no longer available. It may have been deleted or the storage was reset.'
+        )
+        return redirect('note_detail', pk=pk)
+
     try:
         # Try to create download record (will fail if already downloaded due to unique_together)
         download = Download(note=note, user=request.user)
@@ -209,7 +217,7 @@ def download_note_view(request, pk):
     except Exception:
         # User has already downloaded this note
         pass
-    
+
     try:
         # Serve the file
         file_handle = note.file.open('rb')
@@ -217,8 +225,8 @@ def download_note_view(request, pk):
         response['Content-Disposition'] = f'attachment; filename="{note.file.name.split("/")[-1]}"'
         messages.success(request, f'Downloading: {note.title}')
         return response
-    except Exception:
-        messages.error(request, 'Error downloading file. Please try again.')
+    except Exception as e:
+        messages.error(request, f'Error downloading file: {str(e)}')
         return redirect('note_detail', pk=pk)
 
 
@@ -230,11 +238,11 @@ def delete_comment_view(request, pk):
     """
     comment = get_object_or_404(Comment, pk=pk)
     note_id = comment.note.note_id
-    
+
     if comment.can_delete(request.user):
         comment.deleteComment()
         messages.success(request, 'Comment deleted successfully!')
     else:
         messages.error(request, 'You do not have permission to delete this comment.')
-    
+
     return redirect('note_detail', pk=note_id)
