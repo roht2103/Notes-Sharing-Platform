@@ -33,25 +33,39 @@ source venv/bin/activate
 pip install -r requirements.txt
 echo
 
+# Create media directory
+echo "[4/8] Creating media directories..."
+mkdir -p media/notes
+echo "Media directories created"
+echo
+
 # Run migrations
-echo "[4/7] Running database migrations..."
+echo "[5/8] Running database migrations..."
 python manage.py makemigrations
 python manage.py migrate
 echo
 
 # Create sample categories
-echo "[5/7] Creating sample categories..."
-echo "Note: You can create categories via admin panel"
+echo "[6/8] Creating sample categories..."
+python manage.py shell < create_categories.py
+echo "Categories created successfully"
 echo
 
 # Prompt for superuser creation
-echo "[6/7] Create admin account"
+echo "[7/8] Create admin account"
+echo "You can create a custom admin or use default (admin/admin123)"
 echo
-python manage.py createsuperuser
+read -p "Create custom admin? (y/N): " CREATE_CUSTOM
+if [[ "$CREATE_CUSTOM" =~ ^[Yy]$ ]]; then
+    python manage.py createsuperuser
+else
+    python manage.py create_default_admin
+    echo "Default admin created: username=admin, password=admin123"
+fi
 echo
 
 # Final instructions
-echo "[7/7] Setup Complete!"
+echo "[8/8] Setup Complete!"
 echo
 echo "========================================"
 echo "Next Steps:"

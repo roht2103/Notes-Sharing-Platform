@@ -35,26 +35,43 @@ call venv\Scripts\activate.bat
 pip install -r requirements.txt
 echo.
 
+REM Create media directory
+if not exist "media\notes" (
+    echo [4/8] Creating media directories...
+    mkdir media\notes
+    echo Media directories created
+) else (
+    echo [4/8] Media directories already exist
+)
+echo.
+
 REM Run migrations
-echo [4/7] Running database migrations...
+echo [5/8] Running database migrations...
 python manage.py makemigrations
 python manage.py migrate
 echo.
 
-REM Note about categories
-echo [5/7] Categories setup...
-echo Note: Run 'python manage.py shell < create_categories.py' after setup
-echo to create sample categories, or create them via admin panel.
+REM Create categories
+echo [6/8] Creating categories...
+python manage.py shell < create_categories.py
+echo Categories created successfully
 echo.
 
 REM Prompt for superuser creation
-echo [6/7] Create admin account
+echo [7/8] Create admin account
+echo You can create a custom admin or use default (admin/admin123)
 echo.
-python manage.py createsuperuser
+set /p CREATE_CUSTOM="Create custom admin? (Y/N, default is N for admin/admin123): "
+if /i "%CREATE_CUSTOM%"=="Y" (
+    python manage.py createsuperuser
+) else (
+    python manage.py create_default_admin
+    echo Default admin created: username=admin, password=admin123
+)
 echo.
 
 REM Final instructions
-echo [7/7] Setup Complete!
+echo [8/8] Setup Complete!
 echo.
 echo ========================================
 echo Next Steps:
